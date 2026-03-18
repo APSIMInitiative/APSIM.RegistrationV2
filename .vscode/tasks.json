@@ -27,6 +27,13 @@
             "file": "${workspaceFolder}/APSIM.RegistrationV2.csproj",
             "problemMatcher": [],
             "label": "dotnet: watch APSIM.RegistrationV2"
+        },
+        {
+            "type": "dotnet",
+            "task": "build",
+            "file": "${workspaceFolder}/APSIM.RegistrationV2.csproj",
+            "problemMatcher": "$msCompile",
+            "label": "build"
         }
     ]
 }
