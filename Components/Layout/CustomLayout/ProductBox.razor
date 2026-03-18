@@ -1,13 +1,18 @@
 @using APSIM.RegistrationV2.Components.LayoutObjects
+
 <div class="card product-box" >
     <img src="@Product.ImageUrl" alt="@Product.Name" class="card-img-top" />
-    <div class="card-body">
+    <div class="card-body align-items-end">
         <h3 class="card-title">@Product.Name</h3>
         <p class="card-description">@Product.Description</p>
+    </div>
+    <div class="card-footer text-center">
+        <NavLink href="@Product.Href" class="btn btn-success">Register and Download</NavLink>
     </div>
 </div>
 
 @code{
     [Parameter]
     public required Product Product { get; set; }
+
 }

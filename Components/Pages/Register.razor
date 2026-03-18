@@ -1,0 +1,210 @@
+@using APSIM.RegistrationV2.Components.Classes.Registration
+@using APSIM.RegistrationV2.Components.Layout.CustomLayout;
+
+@page "/register/{ProductId?}"
+@*This page allows users to select a product licence and register for it. The content of the page changes based on the selected product.*@
+@rendermode InteractiveServer
+
+<PageTitle>Pick Product Licence</PageTitle>
+
+<div class="row mt-4">
+    <div class="col">
+        <h1 class="text-center">@PageHeading</h1>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <DotPointCard 
+                    Title="Using APSIM for learning or research purposes?" 
+                    Description=@GeneralDotPoints
+                    MainButtonText="Register for General Use Licence"
+                    BodyButtonLink="https://www.apsim.info/registration/general-use-licence/"
+                    BodyButtonText="Full Licence details"
+                    OnToggle="ToggleGeneral"
+                />
+            </div>
+            <div class="col-md-6">
+                <DotPointCard 
+                    Title="Using APSIM for commercial purposes?" 
+                    Description=@SpecialDotPoints
+                    MainButtonText="Register for Special Use Licence"
+                    BodyButtonLink="https://www.apsim.info/registration/special-use-licence/"
+                    BodyButtonText="Full Licence details"
+                    OnToggle="ToggleSpecial"
+                />
+            </div>
+        </div>
+    </div>
+</div>
+
+@* // Special Use Registration Form *@
+<div class="register-row row mt-4" hidden="@(!isSpecialUseRegistrationVisible)">
+    <div class="col">
+        <h1 class="text-center">Special Use Registration</h1>
+
+        <div class="row mt-4">
+            <div class="col">
+                <div class="alert alert-warning text-center" role="alert">
+                    <h4 class="alert-heading">Important Information</h4>
+                    <p>Please choose a licence pathway below carefully. Incorrect selection may delay your application.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="special-use-licence-choice-row row mt-4">
+            <div class="col-md-6">
+                <div class="card text-center h-100">
+                    <div class="card-body text-center h-100">
+                        <h5 class="card-title">Special Use Licence Type 1</h5>
+                        <p class="card-text">This licence type is suitable for organisations </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card text-center h-100">
+                    <div class="card-body text-center h-100">
+                        <h5 class="card-title">Special Use Licence Type 2</h5>
+                        <p class="card-text">Description of Special Use Licence Type 2. This licence is suitable for users who...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* <div class="row mt-4"> 
+            <div class="col-md-6 offset-md-3">
+                <span class="text-center">To start, please provide the required information below.</span>
+                <form class="mb-4 justify-content-center">
+                    <div class="form-group org-basic-info-form-group">
+                        <input type="email" class="form-control me-2 mb-2" placeholder="Email" required />
+                        <input type="text" class="form-control me-2 mb-2" placeholder="Organisation Name" required />
+                        <input type="text" class="form-control me-2 mb-2" placeholder="Contact Name" required />
+                    </div>
+                    <div class="form-group org-extra-info-form-group" >
+                        <input type="text" class="form-control me-2 mb-2" placeholder="Organisation Address" required />
+                        <input type="text" class="form-control me-2 mb-2" placeholder="Organisation Website" required />
+                        <select class="form-select me-2 mb-2" aria-label="Special Use Licence Pathway" required>
+                            <option value="none" disabled selected>Select Licence Pathway</option>
+                            <option value="special-use-type-one">Special Use Licence Type 1</option>
+                            <option value="special-use-type-two">Special Use Licence Type 2</option>
+                        </select>
+                    </div>
+                    <div class="form-group org-revenue-info-form-group">
+                        <label for="annualRevenue" class="form-label">Note: Organisation Annual turnover determines final licence fee</label>
+                        <select class="form-select me-2 mb-2" aria-label="Organisation Annual turnover" required>
+                            <option value="none" disabled selected>Annual Revenue</option>
+                            <option value="less-than-2mil">less than $2 million AUD</option>
+                            <option value="2-40mil">$2 - 40 Million AUD</option>
+                            <option value="greater-than-40mil">greater than $40 million AUD</option>
+                        </select>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success" @onclick="OpenModal">Submit Application</button>
+                    </div>
+                </form>
+            </div>
+        </div> *@
+        @* <div class="row mt-4">
+            <div class="col">
+                <EditForm EditContext="editContext" OnValidSubmit="SubmitApplication" FormName="specialUseRegistrationForm">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                </EditForm>
+            </div>
+        </div> *@
+
+        <div class="general-registration-form-row row mt-4">
+            <div class="col-md-6 offset-md-3">
+                <EditForm Model="@generalUseRegistration" OnValidSubmit="SubmitApplication" FormName="generalUseRegistrationForm">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary 
+                        
+                    />
+                    <div class="row mb-3">
+                        <InputText class="form-control mb-2" Placeholder="Email" @bind-Value="generalUseRegistration!.ContactEmail" />
+                        <ValidationMessage For="@(() => generalUseRegistration.ContactEmail)" />
+                    </div>
+                    <div class="row mb-3">
+                        <InputText class="form-control mb-2" Placeholder="Contact Name" @bind-Value="generalUseRegistration!.ContactName" />
+                        <ValidationMessage For="@(() => generalUseRegistration.ContactName)" />
+                    </div>
+                    <div class="row text-center">
+                        <button type="submit" class="btn btn-success">Submit Application</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<CustomModal @bind-IsOpen="showModal" Title="Application Submitted">
+    <p>Thank you for your application. We will review your submission and contact you via email with the next steps.</p>
+</CustomModal>
+
+@code {
+    // Code for handling form submission and any additional logic can be added here.
+    [Parameter]
+    public string? ProductId { get; set; }
+
+    public string PageHeading {
+        get => ProductId switch
+        {
+            "nextgen" => "APSIM Next Generation Registration",
+            "classic" => "APSIM Classic Registration",
+            _ => "Pick a Product Licence"
+        };               
+    }
+
+    private SpecialUseRegistration specialUseRegistration { get; set; } = new();
+    private GeneralUseRegistration generalUseRegistration { get; set; } = new();    
+
+
+    public List<string> GeneralDotPoints { get; set; } = new List<string>()
+    {
+        "For educational purposes, for personal learning, or for public good research",
+        "Free of charge",
+        "Required to submit modifications back to the APSIM Initiative for potential inclusion in the main codebase",
+    };
+
+    public List<string> SpecialDotPoints { get; set; } = new List<string>()
+    {
+        "For consulting, commercial research, or any activity that generates revenue.",
+        "Requires a fee",
+        "Licencee can keep modifications for private use (Type 2) or "+
+        "submit back to the APSIM Initiative for potential inclusion in the main codebase (Type 1)"
+    };
+
+    public async Task ToggleSpecial()
+    {
+        isSpecialUseRegistrationVisible = !isSpecialUseRegistrationVisible;
+        isGeneralUseRegistrationVisible = !isGeneralUseRegistrationVisible;
+    }
+
+    public async Task ToggleGeneral()
+    {
+        isGeneralUseRegistrationVisible = !isGeneralUseRegistrationVisible;
+        isSpecialUseRegistrationVisible = !isSpecialUseRegistrationVisible;
+    }
+
+    public async Task SubmitApplication()
+    {
+        // Logic for handling form submission can be added here.  
+        // TODO: send form data to backend for processing and storage
+        
+
+    }
+
+    private bool isSpecialUseRegistrationVisible = false;
+
+    private bool isGeneralUseRegistrationVisible = false;
+
+    private bool showModal = false;
+
+    private void OpenModal()
+    {
+        
+        showModal = true;
+    }
+
+
+
+}
