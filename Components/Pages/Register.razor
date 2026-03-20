@@ -1,5 +1,8 @@
 @using APSIM.RegistrationV2.Components.Classes.Registration
 @using APSIM.RegistrationV2.Components.Layout.CustomLayout;
+@using APSIM.RegistrationV2.Components.Classes.Utilities;
+@using APSIM.RegistrationV2.Components.Classes.Registration.EventArgs;
+@using System.Runtime.CompilerServices
 
 @page "/register/{ProductId?}"
 @*This page allows users to select a product licence and register for it. The content of the page changes based on the selected product.*@
@@ -35,10 +38,63 @@
     </div>
 </div>
 
+@* Start of special use choice boxes *@
+<div class="special-use-licence-choice-row row mt-4 mb-4">
+    <div class="col">
+        <div class="row text-center">
+            <h3>Not quite sure which one to pick? </h3>
+            <h4>Go through the steps below.</h4>
+        </div>
+        <DecisionCard 
+            StepNumber="1"
+            StepQuestionText="Do you intend to use APSIM for commercial purposes?"
+            Description="This means you are intending to use APSIM in a commercial setting, such as for profit or business purposes."
+            ToggleYes="ToggleUseInReleased"
+            ToggleNo="ToggleGeneral"
+            ToggleThirdOption="ToggleAll"
+            IsVisible="@isCommercialUseDecisionCardVisible"
+        />
+        <DecisionCard 
+            StepNumber="2"
+            StepQuestionText="Do you intend to only use installed/released versions of APSIM?"
+            Description="This means you will only use installed versions of APSIM and not make any modifications to the source code."
+            DecisionOneText="Yes"
+            DecisionTwoText="No"
+            ToggleYes="ToggleSpecial"
+            ToggleNo="ToggleNoCodeChanges"
+            ToggleThirdOption="ToggleAll"
+            IsVisible="@isUseInReleasedDecisionCardVisible"
+        />
+        <DecisionCard 
+            StepNumber="3"
+            StepQuestionText="Do you intend to make modifications to the APSIM source code?"
+            Description="This means you will be making changes to the APSIM source code, such as adding new features, adding new models, and fixing bugs or changing existing code."
+            DecisionOneText="Yes"
+            DecisionTwoText="No"
+            ToggleYes="ToggleImprovementsShared"
+            ToggleNo="ToggleSpecial"
+            ToggleThirdOption="ToggleAll"
+            IsVisible="@isNoCodeChangesDecisionCardVisible"
+        />
+        <DecisionCard 
+            StepNumber="4"
+            StepQuestionText="Do you intend to share any modifications made back to the APSIM Initiative?"
+            Description="This means you are happy to submit any modifications you make back to the APSIM Initiative for potential inclusion in the main codebase."
+            DecisionOneText="Yes"
+            DecisionTwoText="No"
+            ToggleYes="ToggleSpecial"
+            ToggleNo="ToggleSpecial"
+            ToggleThirdOption="ToggleAll"
+            IsVisible="@areImprovementsSharedDecisionCardVisible"
+        />
+    </div>
+</div>
+
+
 @* // Special Use Registration Form *@
 <div class="register-row row mt-4" hidden="@(!isSpecialUseRegistrationVisible)">
     <div class="col">
-        <h1 class="text-center">Special Use Registration</h1>
+        <h2 class="text-center">Special Use Registration</h2>
 
         <div class="row mt-4">
             <div class="col">
@@ -50,88 +106,93 @@
         </div>
 
         <div class="special-use-licence-choice-row row mt-4">
-            <div class="col-md-6">
+
+            @* <div class="col-md-6">
                 <div class="card text-center h-100">
                     <div class="card-body text-center h-100">
                         <h5 class="card-title">Special Use Licence Type 1</h5>
-                        <p class="card-text">This licence type is suitable for organisations </p>
+                        <p class="card-text">This licence type is suitable for organisations that: </p>
+                        <ul class="text-start">
+                            <li><strong>Intend to use APSIM for commercial purposes</strong></li>
+                            <li><strong>Only intend to use APSIM in released form (installed versions)</strong></li>
+                            <li><strong>Are not making any changes to APSIM source code</strong></li>
+                            <li><strong>Are happy to submit any modifications back to the APSIM Initiative for potential inclusion in the main codebase</strong></li>
+                        </ul>
                     </div>
                 </div>
-            </div>
+            </div> 
+
             <div class="col-md-6">
                 <div class="card text-center h-100">
                     <div class="card-body text-center h-100">
                         <h5 class="card-title">Special Use Licence Type 2</h5>
-                        <p class="card-text">Description of Special Use Licence Type 2. This licence is suitable for users who...</p>
+                        <p class="card-text">This licence is suitable for organisations that: </p>
+                        <ul class="text-start">
+                            <li><strong>Intend to use APSIM for commercial purposes</strong></li>
+                            <li><strong>Require modifications to be retained privately</strong></li>
+                        </ul>
                     </div>
                 </div>
+            </div> *@
+            <div class="col-md-6 offset-md-3 mb-4">
+                    <EditForm Model="@specialUseRegistration" OnValidSubmit="SubmitApplication" FormName="specialUseRegistrationForm">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="row mb-3">
+                            <InputText class="form-control mb-2" Placeholder="Email" @bind-Value="specialUseRegistration!.ContactEmail" />
+                            <ValidationMessage For="@(() => specialUseRegistration.ContactEmail)" />
+                            <InputText class="form-control mb-2" Placeholder="Contact Name" @bind-Value="specialUseRegistration!.ContactName" />
+                            <ValidationMessage For="@(() => specialUseRegistration.ContactName)" />
+                            <InputText class="form-control mb-2" Placeholder="Organisation Name" @bind-Value="specialUseRegistration!.OrganisationName" />
+                            <ValidationMessage For="@(() => specialUseRegistration.OrganisationName)" />
+                            <InputText class="form-control mb-2" Placeholder="Organisation Address" @bind-Value="specialUseRegistration!.OrganisationAddress" />
+                            <ValidationMessage For="@(() => specialUseRegistration.OrganisationAddress)" />
+                            <InputText class="form-control mb-2" Placeholder="Organisation Website" @bind-Value="specialUseRegistration!.OrganisationWebsite" />
+                            <InputText class="form-control mb-2" Placeholder="Contact Phone" @bind-Value="specialUseRegistration!.ContactPhone" />
+                            <InputSelect class="form-control mb-2" @bind-Value="specialUseRegistration!.LicencePathWay">
+                                @foreach (var licencePathway in Enum.GetValues<LicencePathway>())
+                                {
+                                    <option value="@licencePathway">@licencePathway.GetDescription()</option>
+                                }
+                                <option value="" selected disabled>-- Select Licence Pathway --</option>
+                            </InputSelect >
+                            <InputSelect class="form-control mb-2" @bind-Value="specialUseRegistration!.AnnualTurnover">
+                                @foreach (var annualTurnover in Enum.GetValues<AnnualTurnover>())
+                                {
+                                    <option value="@annualTurnover">@annualTurnover.GetDescription()</option>
+                                }
+                                options>
+                                    <option value="" selected disabled>-- Select Annual Turnover Range --</option>
+                            </InputSelect >
+                        </div>
+                        <div class="row text-center">
+                            <button type="submit" class="btn btn-success">Submit Application</button>
+                        </div>
+                    </EditForm>
             </div>
         </div>
+    </div>
+</div>
 
-        @* <div class="row mt-4"> 
-            <div class="col-md-6 offset-md-3">
-                <span class="text-center">To start, please provide the required information below.</span>
-                <form class="mb-4 justify-content-center">
-                    <div class="form-group org-basic-info-form-group">
-                        <input type="email" class="form-control me-2 mb-2" placeholder="Email" required />
-                        <input type="text" class="form-control me-2 mb-2" placeholder="Organisation Name" required />
-                        <input type="text" class="form-control me-2 mb-2" placeholder="Contact Name" required />
-                    </div>
-                    <div class="form-group org-extra-info-form-group" >
-                        <input type="text" class="form-control me-2 mb-2" placeholder="Organisation Address" required />
-                        <input type="text" class="form-control me-2 mb-2" placeholder="Organisation Website" required />
-                        <select class="form-select me-2 mb-2" aria-label="Special Use Licence Pathway" required>
-                            <option value="none" disabled selected>Select Licence Pathway</option>
-                            <option value="special-use-type-one">Special Use Licence Type 1</option>
-                            <option value="special-use-type-two">Special Use Licence Type 2</option>
-                        </select>
-                    </div>
-                    <div class="form-group org-revenue-info-form-group">
-                        <label for="annualRevenue" class="form-label">Note: Organisation Annual turnover determines final licence fee</label>
-                        <select class="form-select me-2 mb-2" aria-label="Organisation Annual turnover" required>
-                            <option value="none" disabled selected>Annual Revenue</option>
-                            <option value="less-than-2mil">less than $2 million AUD</option>
-                            <option value="2-40mil">$2 - 40 Million AUD</option>
-                            <option value="greater-than-40mil">greater than $40 million AUD</option>
-                        </select>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-success" @onclick="OpenModal">Submit Application</button>
-                    </div>
-                </form>
-            </div>
-        </div> *@
-        @* <div class="row mt-4">
-            <div class="col">
-                <EditForm EditContext="editContext" OnValidSubmit="SubmitApplication" FormName="specialUseRegistrationForm">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                </EditForm>
-            </div>
-        </div> *@
 
-        <div class="general-registration-form-row row mt-4">
-            <div class="col-md-6 offset-md-3">
-                <EditForm Model="@generalUseRegistration" OnValidSubmit="SubmitApplication" FormName="generalUseRegistrationForm">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary 
-                        
-                    />
-                    <div class="row mb-3">
-                        <InputText class="form-control mb-2" Placeholder="Email" @bind-Value="generalUseRegistration!.ContactEmail" />
-                        <ValidationMessage For="@(() => generalUseRegistration.ContactEmail)" />
-                    </div>
-                    <div class="row mb-3">
-                        <InputText class="form-control mb-2" Placeholder="Contact Name" @bind-Value="generalUseRegistration!.ContactName" />
-                        <ValidationMessage For="@(() => generalUseRegistration.ContactName)" />
-                    </div>
-                    <div class="row text-center">
-                        <button type="submit" class="btn btn-success">Submit Application</button>
-                    </div>
-                </EditForm>
+<div class="general-registration-form-row row mt-4" hidden="@(!isGeneralUseRegistrationVisible)">
+    <h2>General Use Registration</h2>
+    <div class="col-md-6 offset-md-3">
+        <EditForm Model="@generalUseRegistration" OnValidSubmit="SubmitApplication" FormName="generalUseRegistrationForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="row mb-3">
+                <InputText class="form-control mb-2" Placeholder="Email" @bind-Value="generalUseRegistration!.ContactEmail" />
+                <ValidationMessage For="@(() => generalUseRegistration.ContactEmail)" />
             </div>
-        </div>
-
+            <div class="row mb-3">
+                <InputText class="form-control mb-2" Placeholder="Contact Name" @bind-Value="generalUseRegistration!.ContactName" />
+                <ValidationMessage For="@(() => generalUseRegistration.ContactName)" />
+            </div>
+            <div class="row text-center">
+                <button type="submit" class="btn btn-success">Submit Application</button>
+            </div>
+        </EditForm>
     </div>
 </div>
 
@@ -157,6 +218,10 @@
     private SpecialUseRegistration specialUseRegistration { get; set; } = new();
     private GeneralUseRegistration generalUseRegistration { get; set; } = new();    
 
+    public bool isCommercialUseDecisionCardVisible {get;set;} = true;
+    public bool isUseInReleasedDecisionCardVisible {get;set;} = false;
+    public bool isNoCodeChangesDecisionCardVisible {get;set;} = false;
+    public bool areImprovementsSharedDecisionCardVisible {get;set;} = false;
 
     public List<string> GeneralDotPoints { get; set; } = new List<string>()
     {
@@ -173,24 +238,45 @@
         "submit back to the APSIM Initiative for potential inclusion in the main codebase (Type 1)"
     };
 
-    public async Task ToggleSpecial()
-    {
+    private async Task ToggleSpecial()
+    {   
         isSpecialUseRegistrationVisible = !isSpecialUseRegistrationVisible;
+    }   
+
+    private async Task ToggleGeneral()
+    {
         isGeneralUseRegistrationVisible = !isGeneralUseRegistrationVisible;
     }
 
-    public async Task ToggleGeneral()
+    private async Task ToggleUseInReleased()
     {
-        isGeneralUseRegistrationVisible = !isGeneralUseRegistrationVisible;
-        isSpecialUseRegistrationVisible = !isSpecialUseRegistrationVisible;
+        isUseInReleasedDecisionCardVisible = !isUseInReleasedDecisionCardVisible;
     }
 
-    public async Task SubmitApplication()
+    private async Task ToggleNoCodeChanges()
+    {
+        isNoCodeChangesDecisionCardVisible = !isNoCodeChangesDecisionCardVisible;
+    }
+
+    private async Task ToggleImprovementsShared()
+    {
+        areImprovementsSharedDecisionCardVisible = !areImprovementsSharedDecisionCardVisible;
+    }
+
+    private async Task ToggleAll()
+    {
+        isCommercialUseDecisionCardVisible = true;
+        isUseInReleasedDecisionCardVisible = false;
+        isNoCodeChangesDecisionCardVisible = false;
+        areImprovementsSharedDecisionCardVisible = false;
+        isSpecialUseRegistrationVisible = false;
+        isGeneralUseRegistrationVisible = false;
+    }
+
+    private async Task SubmitApplication()
     {
         // Logic for handling form submission can be added here.  
         // TODO: send form data to backend for processing and storage
-        
-
     }
 
     private bool isSpecialUseRegistrationVisible = false;

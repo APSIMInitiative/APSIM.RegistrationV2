@@ -22,7 +22,7 @@
             "request": "attach",
             "timeout": 60000,
             "internalConsoleOptions": "neverOpen",
-            "url": "http://localhost:5012" // Must match the URL in the other config
+            "url": "http://localhost:5012", // Must match the URL in the other config
         },
         {
             //This is helpful for debugging with breakpoints.
@@ -35,7 +35,7 @@
             "console": "integratedTerminal",
             "requireExactSource": true
         }
-    ],
+    ],       
     "compounds": [
         {
             "name": "Run & Debug with Hot Reload",
@@ -43,5 +43,4 @@
             "stopAll": true
         }
     ]
-        
 }

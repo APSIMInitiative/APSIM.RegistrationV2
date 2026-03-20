@@ -32,12 +32,10 @@ public class SpecialUseRegistration: IRegistration
 
     /// <summary>The licence pathway for this application. This is a required field.</summary>
     [Required(ErrorMessage = "Please select a licence pathway.")] 
-    [DataType(DataType.Custom, ErrorMessage = "Please select a licence pathway.")]
     public LicencePathway LicencePathWay { get; set; }
 
     /// <summary>The annual turnover of the organisation applying for the special use registration. This is a required field.</summary>
     [Required(ErrorMessage = "Please select an annual turnover range.")] 
-    [DataType(DataType.Custom, ErrorMessage = "Please select an annual turnover range.")]
     public AnnualTurnover AnnualTurnover { get; set; }
 
     /// <summary>The date when the application was submitted. This is automatically set to the current date and time.</summary>
