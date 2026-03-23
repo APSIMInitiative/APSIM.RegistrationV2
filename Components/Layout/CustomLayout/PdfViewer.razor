@@ -1,0 +1,23 @@
+
+@if (IsVisible)
+{
+    <div class="pdf-div mt-4 mb-4 border border-success rounded p-4 @ExtraClasses">
+        <h2 class="text-center">Licence Details</h2>
+        <div class="row">
+            <div class="col-md-6 text-center">
+                <iframe src=/Documents/APSIM_General_Use_Licence.pdf width="100%"></iframe>
+            </div>
+        </div>
+    </div>
+}
+
+@code{
+
+    /// <summary>should this component be visible?</summary>
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+
+    /// <summary>Additional CSS classes to apply to the component.</summary>
+    [Parameter]
+    public string ExtraClasses { get; set; } = string.Empty;
+}
