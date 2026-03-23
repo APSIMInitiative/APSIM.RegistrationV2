@@ -82,7 +82,7 @@
             Description="This means you are happy to submit any modifications you make back to the APSIM Initiative for potential inclusion in the main codebase."
             DecisionOneText="Yes"
             DecisionTwoText="No"
-            ToggleYes="ToggleSpecial"
+            ToggleYes="ToggleSpecialSharingYes"
             ToggleNo="ToggleSpecial"
             ToggleThirdOption="ToggleAll"
             IsVisible="@areImprovementsSharedDecisionCardVisible"
@@ -106,78 +106,60 @@
         </div>
 
         <div class="special-use-licence-choice-row row mt-4">
-
-            @* <div class="col-md-6">
-                <div class="card text-center h-100">
-                    <div class="card-body text-center h-100">
-                        <h5 class="card-title">Special Use Licence Type 1</h5>
-                        <p class="card-text">This licence type is suitable for organisations that: </p>
-                        <ul class="text-start">
-                            <li><strong>Intend to use APSIM for commercial purposes</strong></li>
-                            <li><strong>Only intend to use APSIM in released form (installed versions)</strong></li>
-                            <li><strong>Are not making any changes to APSIM source code</strong></li>
-                            <li><strong>Are happy to submit any modifications back to the APSIM Initiative for potential inclusion in the main codebase</strong></li>
-                        </ul>
-                    </div>
-                </div>
-            </div> 
-
-            <div class="col-md-6">
-                <div class="card text-center h-100">
-                    <div class="card-body text-center h-100">
-                        <h5 class="card-title">Special Use Licence Type 2</h5>
-                        <p class="card-text">This licence is suitable for organisations that: </p>
-                        <ul class="text-start">
-                            <li><strong>Intend to use APSIM for commercial purposes</strong></li>
-                            <li><strong>Require modifications to be retained privately</strong></li>
-                        </ul>
-                    </div>
-                </div>
-            </div> *@
             <div class="col-md-6 offset-md-3 mb-4">
-                    <EditForm Model="@specialUseRegistration" OnValidSubmit="SubmitApplication" FormName="specialUseRegistrationForm">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
-                        <div class="row mb-3">
-                            <InputText class="form-control mb-2" Placeholder="Email" @bind-Value="specialUseRegistration!.ContactEmail" />
-                            <ValidationMessage For="@(() => specialUseRegistration.ContactEmail)" />
-                            <InputText class="form-control mb-2" Placeholder="Contact Name" @bind-Value="specialUseRegistration!.ContactName" />
-                            <ValidationMessage For="@(() => specialUseRegistration.ContactName)" />
-                            <InputText class="form-control mb-2" Placeholder="Organisation Name" @bind-Value="specialUseRegistration!.OrganisationName" />
-                            <ValidationMessage For="@(() => specialUseRegistration.OrganisationName)" />
-                            <InputText class="form-control mb-2" Placeholder="Organisation Address" @bind-Value="specialUseRegistration!.OrganisationAddress" />
-                            <ValidationMessage For="@(() => specialUseRegistration.OrganisationAddress)" />
-                            <InputText class="form-control mb-2" Placeholder="Organisation Website" @bind-Value="specialUseRegistration!.OrganisationWebsite" />
-                            <InputText class="form-control mb-2" Placeholder="Contact Phone" @bind-Value="specialUseRegistration!.ContactPhone" />
-                            <InputSelect class="form-control mb-2" @bind-Value="specialUseRegistration!.LicencePathWay">
-                                @foreach (var licencePathway in Enum.GetValues<LicencePathway>())
-                                {
-                                    <option value="@licencePathway">@licencePathway.GetDescription()</option>
-                                }
-                                <option value="" selected disabled>-- Select Licence Pathway --</option>
-                            </InputSelect >
-                            <InputSelect class="form-control mb-2" @bind-Value="specialUseRegistration!.AnnualTurnover">
-                                @foreach (var annualTurnover in Enum.GetValues<AnnualTurnover>())
-                                {
-                                    <option value="@annualTurnover">@annualTurnover.GetDescription()</option>
-                                }
-                                options>
-                                    <option value="" selected disabled>-- Select Annual Turnover Range --</option>
-                            </InputSelect >
-                        </div>
-                        <div class="row text-center">
-                            <button type="submit" class="btn btn-success">Submit Application</button>
-                        </div>
-                    </EditForm>
+                <h2>Special Use Registration</h2>
+                <p>Based on your selections a licence pathway has been selected for you.</p>
+                <EditForm Model="@specialUseRegistration" OnValidSubmit="SubmitApplication" FormName="specialUseRegistrationForm">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="row mb-3">
+                        <InputText class="form-control mb-2" Placeholder="Email" @bind-Value="specialUseRegistration!.ContactEmail" />
+                        <ValidationMessage For="@(() => specialUseRegistration.ContactEmail)" />
+                        <InputText class="form-control mb-2" Placeholder="Contact Name" @bind-Value="specialUseRegistration!.ContactName" />
+                        <ValidationMessage For="@(() => specialUseRegistration.ContactName)" />
+                        <InputText class="form-control mb-2" Placeholder="Organisation Name" @bind-Value="specialUseRegistration!.OrganisationName" />
+                        <ValidationMessage For="@(() => specialUseRegistration.OrganisationName)" />
+                        <InputText class="form-control mb-2" Placeholder="Organisation Address" @bind-Value="specialUseRegistration!.OrganisationAddress" />
+                        <ValidationMessage For="@(() => specialUseRegistration.OrganisationAddress)" />
+                        <InputText class="form-control mb-2" Placeholder="Organisation Website" @bind-Value="specialUseRegistration!.OrganisationWebsite" />
+                        <InputText class="form-control mb-2" Placeholder="Contact Phone" @bind-Value="specialUseRegistration!.ContactPhone" />
+                        <InputSelect class="form-control mb-2" @bind-Value="specialUseRegistration!.LicencePathWay">
+                            <option value=""disabled>-- Select Licence Pathway --</option>
+                            @if (SpecialUseStep <= 3)
+                            {
+                                <option value="@LicencePathway.TypeOne" selected disabled>@LicencePathway.TypeOne.GetDescription()</option>
+                                <option value="@LicencePathway.TypeTwo" disabled>@LicencePathway.TypeTwo.GetDescription()</option>
+                            }
+                            @if (SpecialUseStep == 4)
+                            {
+                                <option value="@LicencePathway.TypeOne" disabled>@LicencePathway.TypeOne.GetDescription()</option>
+                                <option value="@LicencePathway.TypeTwo" disabled selected>@LicencePathway.TypeTwo.GetDescription()</option>
+                            }
+                        </InputSelect >
+                        <InputSelect class="form-control mb-2" @bind-Value="specialUseRegistration!.AnnualTurnover">
+                            @foreach (var annualTurnover in Enum.GetValues<AnnualTurnover>())
+                            {
+                                <option value="@annualTurnover">@annualTurnover.GetDescription()</option>
+                            }
+                            <option value="" selected disabled>-- Select Annual Turnover Range --</option>
+                        </InputSelect >
+                        <InputSelect class="form-control mb-2" @bind-Value="specialUseRegistration!.LicenceStatus">
+                            <option value="@LicenceStatus.SpecialAwaitingReview" selected disabled>@LicenceStatus.SpecialAwaitingReview.GetDescription()</option>
+                        </InputSelect >
+                    </div>
+                    <div class="row text-center">
+                        <button type="submit" class="btn btn-success">Submit Application</button>
+                    </div>
+                </EditForm>
             </div>
         </div>
     </div>
 </div>
 
 
-<div class="general-registration-form-row row mt-4" hidden="@(!isGeneralUseRegistrationVisible)">
-    <h2>General Use Registration</h2>
-    <div class="col-md-6 offset-md-3">
+<div class="general-registration-form-row row " hidden="@(!isGeneralUseRegistrationVisible)">
+    <div class="col-md-6 offset-md-3 mt-5 mb-5 p-4 border border-success rounded">
+        <h2 class="text-center">General Use Registration</h2>
         <EditForm Model="@generalUseRegistration" OnValidSubmit="SubmitApplication" FormName="generalUseRegistrationForm">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -189,12 +171,41 @@
                 <InputText class="form-control mb-2" Placeholder="Contact Name" @bind-Value="generalUseRegistration!.ContactName" />
                 <ValidationMessage For="@(() => generalUseRegistration.ContactName)" />
             </div>
+            <div class="row mb-3">
+                <InputSelect @bind-Value="generalUseRegistration!.LicenceStatus" class="form-control mb-2">
+                    <option value="@LicenceStatus.GeneralUse" selected disabled>@LicenceStatus.GeneralUse.GetDescription()</option>
+                </InputSelect>
+            </div>
             <div class="row text-center">
                 <button type="submit" class="btn btn-success">Submit Application</button>
             </div>
+
         </EditForm>
     </div>
 </div>
+
+@* <div class="pdf-div mt-4 mb-4 border border-success rounded p-4" hidden="@(!isGeneralUseLicenceVisible)">
+    <h2 class="text-center">Licence Details</h2>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <iframe src=/Documents/APSIM_General_Use_Licence.pdf width="100%"></iframe>
+        </div>
+    </div>
+</div> *@
+
+@* <div class="pdf-div mt-4 mb-4 border border-success rounded p-4" hidden="@(!isSpecialUseLicenceVisible)">
+    <h2 class="text-center">Licence Details</h2>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <iframe src=/Documents/APSIM_Special_Use_Licence.pdf width="100%"></iframe>
+        </div>
+    </div>
+</div> *@
+
+<PdfViewer IsVisible="@isGeneralUseLicenceVisible" />
+
+<PdfViewer IsVisible="@isSpecialUseLicenceVisible" />
+
 
 
 <CustomModal @bind-IsOpen="showModal" Title="Application Submitted">
@@ -206,6 +217,8 @@
     [Parameter]
     public string? ProductId { get; set; }
 
+    public int SpecialUseStep { get; set; } = 0;
+
     public string PageHeading {
         get => ProductId switch
         {
@@ -214,6 +227,12 @@
             _ => "Pick a Product Licence"
         };               
     }
+
+    /// <summary>should the general use licence PDF section visible?</summary>
+    private bool isGeneralUseLicenceVisible = false;
+
+    /// <summary>should the special use licence PDF section visible?</summary>
+    private bool isSpecialUseLicenceVisible = false;
 
     private SpecialUseRegistration specialUseRegistration { get; set; } = new();
     private GeneralUseRegistration generalUseRegistration { get; set; } = new();    
@@ -238,6 +257,13 @@
         "submit back to the APSIM Initiative for potential inclusion in the main codebase (Type 1)"
     };
 
+    private async Task ToggleSpecialSharingYes()
+    {
+        SpecialUseStep = 3;
+        isSpecialUseRegistrationVisible = !isSpecialUseRegistrationVisible;
+    }
+
+
     private async Task ToggleSpecial()
     {   
         isSpecialUseRegistrationVisible = !isSpecialUseRegistrationVisible;
@@ -251,16 +277,19 @@
     private async Task ToggleUseInReleased()
     {
         isUseInReleasedDecisionCardVisible = !isUseInReleasedDecisionCardVisible;
+        SpecialUseStep = 2;
     }
 
     private async Task ToggleNoCodeChanges()
     {
         isNoCodeChangesDecisionCardVisible = !isNoCodeChangesDecisionCardVisible;
+        SpecialUseStep = 3;
     }
 
     private async Task ToggleImprovementsShared()
     {
         areImprovementsSharedDecisionCardVisible = !areImprovementsSharedDecisionCardVisible;
+        SpecialUseStep = 4;
     }
 
     private async Task ToggleAll()
@@ -271,12 +300,27 @@
         areImprovementsSharedDecisionCardVisible = false;
         isSpecialUseRegistrationVisible = false;
         isGeneralUseRegistrationVisible = false;
+        SpecialUseStep = 0;
     }
+
 
     private async Task SubmitApplication()
     {
         // Logic for handling form submission can be added here.  
         // TODO: send form data to backend for processing and storage
+        if (isGeneralUseRegistrationVisible)
+        {
+            isGeneralUseLicenceVisible = true;
+            Console.WriteLine("General Use Registration Submitted:");
+            Console.WriteLine(generalUseRegistration.ToString());
+        }
+        else if (isSpecialUseRegistrationVisible)
+        {
+            isSpecialUseLicenceVisible = true;
+            Console.WriteLine("Special Use Registration Submitted:");
+            Console.WriteLine(specialUseRegistration.ToString());
+        }
+
     }
 
     private bool isSpecialUseRegistrationVisible = false;
